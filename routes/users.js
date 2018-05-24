@@ -49,13 +49,7 @@ router.route('/signup')
 router.route('/login')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
 .post(cors.corsWithOptions, passport.authenticate('local'), (req, res) => {
-
   var token = authenticate.getToken({_id: req.user._id});
-  // exports.getToken = function(user) {
-  //  return jwt.sign(user, config.secretKey, {expiresIn: 3600});
-  // };
-  // 그래서 user 파라미터는 결국 {아이디: 아이디}의 형태이다.
-
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
   res.json({success: true, token: token, status: 'You are successfully logged in!'});
@@ -76,5 +70,103 @@ router.route('/logout')
   }
 });
 
+router.route('/checkJWTToken')
+.options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
+.get(cors.corsWithOptions, (req, res) => {
+	passport.authenticate('jwt', {session: false}, (err,user,info) => {
+		if (err)
+      return next(err);
+    
+    if (!user) {
+      res.statusCode = 401;
+      res.setHeader('Content-Type', 'application/json');
+      return res.json({status: 'JWT invalid!', success: false, err: info});
+    }
+    else {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      return res.json({status: 'JWT valid!', success: true, user: user});
+		}
+	}) (req, res);
+});
+
+/*
+router.get('/checkJWTToken', cors.corsWithOptions, (req, res) => {
+  passport.authenticate('jwt', {session: false}, (err, user, info) => {
+    if (err)
+      return next(err);
+    
+    if (!user) {
+      res.statusCode = 401;
+      res.setHeader('Content-Type', 'application/json');
+      return res.json({status: 'JWT invalid!', success: false, err: info});
+    }
+    else {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      return res.json({status: 'JWT valid!', success: true, user: user});
+
+    }
+  }) (req, res);
+});
+*/
 
 module.exports = router;
+
+/* Suggested from Coursera
+. . .
+
+router.options('*', cors.corsWithOptions, (req, res) => { res.sendStatus(200); } )
+
+
+. . .
+
+router.post('/login', cors.corsWithOptions, (req, res, next) => {
+
+  passport.authenticate('local', (err, user, info) => {
+    if (err)
+      return next(err);
+
+    if (!user) {
+      res.statusCode = 401;
+      res.setHeader('Content-Type', 'application/json');
+      res.json({success: false, status: 'Login Unsuccessful!', err: info});
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        res.statusCode = 401;
+        res.setHeader('Content-Type', 'application/json');
+        res.json({success: false, status: 'Login Unsuccessful!', err: 'Could not log in user!'});          
+      }
+
+      var token = authenticate.getToken({_id: req.user._id});
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.json({success: true, status: 'Login Successful!', token: token});
+    }); 
+  }) (req, res, next);
+});
+
+. . .
+
+router.get('/checkJWTToken', cors.corsWithOptions, (req, res) => {
+  passport.authenticate('jwt', {session: false}, (err, user, info) => {
+    if (err)
+      return next(err);
+    
+    if (!user) {
+      res.statusCode = 401;
+      res.setHeader('Content-Type', 'application/json');
+      return res.json({status: 'JWT invalid!', success: false, err: info});
+    }
+    else {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      return res.json({status: 'JWT valid!', success: true, user: user});
+
+    }
+  }) (req, res);
+});
+
+. . .
+*/
