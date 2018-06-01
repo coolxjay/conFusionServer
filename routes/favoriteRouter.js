@@ -141,16 +141,30 @@ favoriteRouter.route('/:dishId')
 	Favorites.findOne({user: req.user._id})
 	.then((favorite) => {
 		if(favorite) {
-			favorite.dishes.id(req.params.dishId).remove();
-			favorite.save()
-			.then((resp) => {
-				res.statusCode = 200;
-				res.setHeader('Content-Type', 'applicaiton/json');
-				res.json(resp);
-			}, (err) => next(err))
-			.catch((err) => next(err));
+			var index = favorite.dishes.indexOf(req.params.dishId);
+			if( index >= 0 ) {
+				favorite.dishes.splice(index, 1);
+				favorite.save()
+				.then((resp) => {
+					res.statusCode = 200;
+					res.setHeader('Content-Type', 'applicaiton/json');
+					res.json(resp);
+				}, (err) => next(err))
+				.catch((err) => next(err));
+			}
+			else {
+				var err = new Error("nothing to delete");
+				err.status = 403;
+				return next(err);
+			}
 		}
-	})
+		else {
+			var err = new Error("nothing to delete");
+			err.status = 403;
+			return next(err);
+		}
+	}, (err) => next(err))
+	.catch((err) => next(err));
 });
 
 module.exports = favoriteRouter;
