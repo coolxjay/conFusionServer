@@ -13,19 +13,19 @@ leaderRouter.route('/')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
 .get(cors.cors, (req,res,next) => {
 	Leaders.find(req.query)
-	.then((dishes) => {
+	.then((leaders) => {
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'application/json');
-		res.json(dishes);
+		res.json(leaders);
 	}, (err) => next(err))
 	.catch((err) => next(err));
 })
 .post(cors.corsWithOptions, authenticate.verifyUser,  authenticate.verifyAdmin, (req,res,next) => {
 	Leaders.create(req.body)
-	.then((dish) => {
+	.then((leader) => {
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'application/json');
-		res.json(dish);
+		res.json(leader);
 	}, (err) => next(err))
 	.catch((err) => next(err));
 })

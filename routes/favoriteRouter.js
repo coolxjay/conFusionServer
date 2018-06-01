@@ -17,12 +17,12 @@ favoriteRouter.route('/')
 				if (!favorites) {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
-            return res.json({"exists": false, "favorites": favorites});
+            return res.json(favorites);
         }
         else {
 					res.statusCode = 200;
 					res.setHeader('Content-Type', 'application/json');
-					return res.json({"exists": true, "favorites": favorites});
+					return res.json(favorites);
         }
     }, (err) => next(err))
     .catch((err) => next(err))
