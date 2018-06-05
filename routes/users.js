@@ -33,6 +33,7 @@ router.route('/signup')
     else {
 			if(req.body.firstname) user.firstname = req.body.firstname;
 			if(req.body.lastname)  user.lastname  = req.body.lastname;
+      if(req.body.admin) user.admin = req.body.admin;
       user.save()
 			.then((user) => {
 				passport.authenticate('local')(req, res, () => {
@@ -70,7 +71,7 @@ router.route('/login')
       authenticate.jwtPassport;
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.json({success: true, status: 'Login Successful!', token: token});
+      res.json({success: true, status: 'Login Successful!', token: token, admin:user.admin});
     }); 
   }) (req, res, next);
 });
