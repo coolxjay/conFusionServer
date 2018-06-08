@@ -112,6 +112,49 @@ router.route('/logout')
   }
 });
 
+router.route('/:username')
+.options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
+.put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+  User.findOne({username: req.params.username})
+  .then((user) => {
+    if(user) {
+      User.findByIdAndUpdate({_id:user._id}, {$set:req.body}, {new:true})
+      .then((user) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(user);
+      }, (err) => {
+        var err = new Error("Updating failed");
+        err.status = 403;
+        return next(err);
+      })
+    } 
+    else {
+      var err = new Error("User not found");
+      err.status = 403;
+      return next(err);
+    }
+  }, (err) => next(err))
+  .catch((err) => next(err));
+});
+
+router.route('/facebook/token')
+.options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
+.get(cors.corsWithOptions, (req,res,next) => {
+  passport.authenticate('facebook-token'), (req, res) => {
+    if (req.user) {
+      var token = authenticate.getToken({_id: req.user._id});
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.json({success: true, token: token, status: 'You are successfully logged in!'});
+    }
+    else {
+      var err = new Error('No user');
+      err.status = 403;
+      return next(err);
+    }
+  }
+});
 
 module.exports = router;
 
