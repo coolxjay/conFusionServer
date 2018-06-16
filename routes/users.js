@@ -71,7 +71,7 @@ router.route('/login')
       authenticate.jwtPassport;
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.json({success: true, status: 'Login Successful!', token: token, admin:user.admin});
+      res.json({success: true, status: 'Login Successful!', token: token});
     }); 
   }) (req, res, next);
 });

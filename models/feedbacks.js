@@ -18,6 +18,7 @@ var feedbackSchema = new Schema({
         type: String,
         required: true
     },
+    agree: Boolean,
     contact: {
         type: String,
         required: false
