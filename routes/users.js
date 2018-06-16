@@ -67,7 +67,7 @@ router.route('/login')
         res.json({success: false, status: 'Login Unsuccessful!', err: 'Could not log in user!'});          
       }
 
-      var token = authenticate.getToken({_id: req.user._id});
+      var token = authenticate.getToken({_id: req.user._id, admin:req.user.admin});
       authenticate.jwtPassport;
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
