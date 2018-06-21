@@ -7,6 +7,27 @@ const videoRouter = express.Router();
 const cors = require('./cors');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/vides');
+    },
+
+    filename: (req, file, cb) => {
+        cb(null, file.originalname)
+    }
+});
+
+const videoFileFilter = (req, file, cb) => {
+    if(!file.originalname.match(/\.(\.mp4)$/)) {
+        return cb(new Error(file.originalname), false);
+    }
+    cb(null, true);
+};
+
+const videoUpload = multer({ storage: storage, fileFilter: videoFileFilter});
+
 
 videoRouter.use(bodyParser.json());
 
@@ -52,9 +73,10 @@ videoRouter.route('/')
   }
 
 })
-.post(cors.corsWithOptions, authenticate.verifyUser,  authenticate.verifyAdmin, (req,res,next) => {
-	res.stsatusCode = 204;
-	res.end('POST operation is not ready yet');
+.post(cors.corsWithOptions, videoUpload.single('videoFile'), (req, res) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json(req.file);
 })
 .delete(cors.corsWithOptions, authenticate.verifyUser,  authenticate.verifyAdmin, (req,res,next) => {
 	res.stsatusCode = 204;
