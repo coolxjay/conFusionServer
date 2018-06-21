@@ -21,19 +21,19 @@ const imageFileFilter = (req, file, cb) => {
     cb(null, true);
 };
 
-const upload = multer({ storage: storage, fileFilter: imageFileFilter});
+const imageUpload = multer({ storage: storage, fileFilter: imageFileFilter});
 
-const uploadRouter = express.Router();
+const imageRouter = express.Router();
 
-uploadRouter.use(bodyParser.json());
+imageRouter.use(bodyParser.json());
 
-uploadRouter.route('/')
+imageRouter.route('/')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
 .get(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end('GET operation not supported on /imageUpload');
 })
-.post(cors.corsWithOptions, upload.single('imageFile'), (req, res) => {
+.post(cors.corsWithOptions, imageUpload.single('imageFile'), (req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.json(req.file);
@@ -47,4 +47,4 @@ uploadRouter.route('/')
     res.end('DELETE operation not supported on /imageUpload');
 });
 
-module.exports = uploadRouter;
+module.exports = imageRouter;

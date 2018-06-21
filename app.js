@@ -9,9 +9,10 @@ var usersRouter = require('./routes/users');
 var dishRouter = require('./routes/dishRouter');
 var promotionRouter = require('./routes/promotionRouter');
 var leaderRouter = require('./routes/leaderRouter');
-const uploadRouter = require('./routes/uploadRouter');
 const favoriteRouter = require('./routes/favoriteRouter');
 const feedbackRouter = require('./routes/feedbackRouter');
+const imageRouter = require('./routes/imageRouter');
+const videoRouter = require('./routes/videoRouter');
 
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
@@ -63,9 +64,10 @@ app.use('/users', usersRouter);
 app.use('/dishes', dishRouter);
 app.use('/promotions', promotionRouter);
 app.use('/leaders', leaderRouter);
-app.use('/imageUpload',uploadRouter);
 app.use('/favorites', favoriteRouter);
 app.use('/feedbacks', feedbackRouter);
+app.use('/images',imageRouter);
+app.use('/videos', videoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
