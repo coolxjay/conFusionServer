@@ -11,7 +11,7 @@ const multer = require('multer');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/vides');
+        cb(null, 'public/videos');
     },
 
     filename: (req, file, cb) => {
@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 });
 
 const videoFileFilter = (req, file, cb) => {
-    if(!file.originalname.match(/\.(\.mp4)$/)) {
+    if(file.originalname.match(/\./)) {
         return cb(new Error(file.originalname), false);
     }
     cb(null, true);
@@ -35,8 +35,24 @@ videoRouter.use(bodyParser.json());
 videoRouter.route('/')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
 .get(cors.cors, (req,res,next) => {
+  res.statusCode = 204;
+  res.end('GET on /videos not supported');
+})
+.post(cors.corsWithOptions, videoUpload.single('videoFile'), (req, res) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json(req.file);
+})
+.delete(cors.corsWithOptions, authenticate.verifyUser,  authenticate.verifyAdmin, (req,res,next) => {
+	res.stsatusCode = 204;
+	res.end('POST operation is not ready yet');
+});
 
-  const path = 'public/videos/sample.mp4';
+
+videoRouter.route('/:name')
+.options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
+.get(cors.cors, (req,res,next) => {
+  const path = 'public/videos/' + req.params.videoId;
   if( !fs.existsSync(path) ) {
     res.statusCode = 203;
     res.end("No such file");
@@ -71,16 +87,6 @@ videoRouter.route('/')
       fs.createReadStream(path).pipe(res);
     }
   }
-
 })
-.post(cors.corsWithOptions, videoUpload.single('videoFile'), (req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.json(req.file);
-})
-.delete(cors.corsWithOptions, authenticate.verifyUser,  authenticate.verifyAdmin, (req,res,next) => {
-	res.stsatusCode = 204;
-	res.end('POST operation is not ready yet');
-});
 
 module.exports = videoRouter;

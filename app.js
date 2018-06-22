@@ -13,6 +13,7 @@ const favoriteRouter = require('./routes/favoriteRouter');
 const feedbackRouter = require('./routes/feedbackRouter');
 const imageRouter = require('./routes/imageRouter');
 const videoRouter = require('./routes/videoRouter');
+const videoInfoRouter = require('./routes/videoInfoRouter');
 
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
@@ -68,6 +69,7 @@ app.use('/favorites', favoriteRouter);
 app.use('/feedbacks', feedbackRouter);
 app.use('/images',imageRouter);
 app.use('/videos', videoRouter);
+app.use('/videoInfo', videoInfoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
